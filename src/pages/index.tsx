@@ -1,4 +1,3 @@
-import S3 from "aws-sdk/clients/s3";
 import { NextPage } from "next";
 import Head from "next/head";
 import { useCallback, useRef, useState } from "react";
@@ -9,16 +8,7 @@ import Malleable, { FieldEdit } from "../components/malleable";
 import Snapshot from "../components/snapshot";
 import { useScrollReset } from "../hooks/use-scroll-reset";
 import layoutStyles from "../styles/layout.module.css";
-
-// Next.js automatically eliminates code used for `getStaticProps`!
-// This code (and the `aws-sdk` import) will be absent from the final client-
-// side JavaScript bundle(s).
-const s3 = new S3({
-  credentials: {
-    accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY,
-  },
-});
+import { readFile } from "fs/promises";
 
 export async function getStaticProps({
   // `preview` is a Boolean, specifying whether or not the application is in
@@ -34,14 +24,10 @@ export async function getStaticProps({
     try {
       // In preview mode, we want to access the stored data from AWS S3.
       // Imagine using this to fetch draft CMS state, etc.
-      const object = await s3
-        .getObject({
-          Bucket: process.env.AWS_S3_BUCKET,
-          Key: `${snapshotId}.json`,
-        })
-        .promise();
+      let cwd = process.cwd();
+      const rawContents = await readFile(`${cwd}/previews/${snapshotId}.json`);
+      const contents = JSON.parse(rawContents);
 
-      const contents = JSON.parse(object.Body.toString());
       return {
         props: { isPreview: true, snapshotId, contents },
       };
@@ -55,7 +41,7 @@ export async function getStaticProps({
             // objects, but the bucket itself is private.
             e.statusCode === 403
               ? "The requested preview edit does not exist!"
-              : "An error has occurred while connecting to S3. Please refresh the page to try again.",
+              : e.message,
         },
       };
     }

@@ -1,15 +1,8 @@
-import S3 from "aws-sdk/clients/s3";
 import { NextApiHandler } from "next";
 import { generate as generateId } from "shortid";
+import { open } from "fs/promises";
 
 // Initialize S3 instance in module scope for re-use across requests.
-const s3 = new S3({
-  credentials: {
-    accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY,
-  },
-});
-
 const handler: NextApiHandler = async (req, res) => {
   // Generate a friendly ID for this save request:
   const snapshotId = generateId();
@@ -21,18 +14,17 @@ const handler: NextApiHandler = async (req, res) => {
   //
   // We're not worried about ID collisions, but a real application probably
   // should be!
+  let filehandle: any;
   try {
-    await s3
-      .upload({
-        Bucket: process.env.AWS_S3_BUCKET,
-        Key: `${snapshotId}.json`,
-        Body: JSON.stringify(contents),
-      })
-      .promise();
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Internal Server Error");
-    return res.end();
+    let cwd = process.cwd();
+    let filePath = `${cwd}/previews/${snapshotId}.json`;
+
+    filehandle = await open(filePath, "w");
+    await filehandle.writeFile(JSON.stringify(contents));
+    await filehandle.close();
+    console.log(`Should have saved: ${filePath}`);
+  } catch (e) {
+    await filehandle?.close();
   }
 
   // Return the `snapshotId` so the frontend can generate a sharable link.
