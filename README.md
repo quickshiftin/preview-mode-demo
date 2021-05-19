@@ -2,6 +2,8 @@
 
 This demo showcases Next.js' next-gen Static Site Generation (SSG) support.
 
+_Note:_ This is a fork of the standard demo, that uses the local filesystem instead of S3. You can run it w/ node 14+.
+
 ## About
 
 Next.js is the first hybrid framework, allowing you to choose the technique
