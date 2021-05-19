@@ -2,8 +2,6 @@
 
 This demo showcases Next.js' next-gen Static Site Generation (SSG) support.
 
-_Note:_ This is a fork of the standard demo, that uses the local filesystem instead of S3. You can run it w/ node 14+.
-
 ## About
 
 Next.js is the first hybrid framework, allowing you to choose the technique
@@ -27,3 +25,10 @@ real-time draft content from their CMS, among other use cases.
 You can learn more about this feature in the
 [Next.js 9.3 Blog Post](https://nextjs.org/blog/next-9-3) or our
 [Documentation](https://nextjs.org/docs/advanced-features/preview-mode).
+
+## Note
+
+This is a fork of the standard demo, that uses the local filesystem instead of S3. You can run it w/ node 14+.
+
+There is also an example of [`getStaticPaths`](https://nextjs.org/docs/basic-features/data-fetching#getstaticpaths-static-generation).
+You'll need to create a couple of previews before running `next build` in order to see it in action. The previews will be available at `http://locacalhost:3000/preview/{snapshotId}`

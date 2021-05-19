@@ -52,11 +52,12 @@ export async function getStaticProps({
 }
 
 export async function getStaticPaths() {
+  let cwd = process.cwd();
+  const files = await fsp.readdir(`${cwd}/previews`);
   return {
-    paths: [
-      { params: { snapshotId: "Qf6jpIYGh" } },
-      { params: { snapshotId: "aQoEvGvxy" } },
-    ],
+    paths: files.map((file) => ({
+      params: { snapshotId: file.replace(".json", "") },
+    })),
     fallback: false,
   };
 }
