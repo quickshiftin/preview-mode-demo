@@ -1,6 +1,6 @@
 import { NextApiHandler } from "next";
 import { generate as generateId } from "shortid";
-import { open } from "fs/promises";
+import { promises as fsp } from "fs";
 
 // Initialize S3 instance in module scope for re-use across requests.
 const handler: NextApiHandler = async (req, res) => {
@@ -19,7 +19,7 @@ const handler: NextApiHandler = async (req, res) => {
     let cwd = process.cwd();
     let filePath = `${cwd}/previews/${snapshotId}.json`;
 
-    filehandle = await open(filePath, "w");
+    filehandle = await fsp.open(filePath, "w");
     await filehandle.writeFile(JSON.stringify(contents));
     await filehandle.close();
     console.log(`Should have saved: ${filePath}`);

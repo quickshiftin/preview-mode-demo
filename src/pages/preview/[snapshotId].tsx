@@ -1,13 +1,13 @@
 import { NextPage } from "next";
 import Head from "next/head";
 import { useCallback, useRef, useState } from "react";
-import Edit from "../components/edit";
-import { ErrorDialog } from "../components/error";
-import { ShareLinkDialog } from "../components/home/ShareLinkDialog";
-import Malleable, { FieldEdit } from "../components/malleable";
-import Snapshot from "../components/snapshot";
-import { useScrollReset } from "../hooks/use-scroll-reset";
-import layoutStyles from "../styles/layout.module.css";
+import Edit from "../../components/edit";
+import { ErrorDialog } from "../../components/error";
+import { ShareLinkDialog } from "../../components/home/ShareLinkDialog";
+import Malleable, { FieldEdit } from "../../components/malleable";
+import Snapshot from "../../components/snapshot";
+import { useScrollReset } from "../../hooks/use-scroll-reset";
+import layoutStyles from "../../styles/layout.module.css";
 import { promises as fsp } from "fs";
 
 export async function getStaticProps({
@@ -49,6 +49,16 @@ export async function getStaticProps({
     }
   }
   return { props: { isPreview: false } };
+}
+
+export async function getStaticPaths() {
+  return {
+    paths: [
+      { params: { snapshotId: "Qf6jpIYGh" } },
+      { params: { snapshotId: "aQoEvGvxy" } },
+    ],
+    fallback: false,
+  };
 }
 
 const Home: NextPage<GetProps<typeof getStaticProps>> = (props) => {
